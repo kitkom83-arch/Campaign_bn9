@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>รวม Widgets: Telegram + X</title>
+  <meta name="theme-color" content="#081326" />
+  <style>
+    :root{
+      --bg:#071122;
+      --card:#101f38;
+      --card2:#142a4d;
+      --text:#f5f8ff;
+      --muted:#b8c8ea;
+      --line:rgba(135,177,255,.2);
+      --accent:#2f7fff;
+      --ok:#20d67b;
+      --warn:#ffd166;
+      --danger:#ff6b6b;
+      --shadow:0 18px 50px rgba(0,0,0,.38);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Thai",Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 0%,rgba(47,127,255,.28),transparent 28%),
+        radial-gradient(circle at 85% 10%,rgba(32,214,123,.13),transparent 22%),
+        linear-gradient(180deg,#071122,#09182e 42%,#071122);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .page{width:min(100%,1100px);margin:0 auto;padding:22px 14px 50px}
+    .hero{
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      padding:22px;
+    }
+    .logo{width:min(145px,46vw);display:block;margin:0 auto 10px;filter:drop-shadow(0 10px 24px rgba(255,190,60,.16))}
+    .title{margin:0;text-align:center;font-size:clamp(1.75rem,4vw,3rem);line-height:1.05;font-weight:950}
+    .subtitle{margin:12px auto 0;text-align:center;max-width:780px;color:var(--muted);line-height:1.75}
+    .quick-edit{
+      margin:18px 0 0;
+      display:grid;
+      gap:10px;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+    }
+    .quick-edit a{
+      text-decoration:none;
+      padding:12px 14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      color:#eaf2ff;
+      font-weight:800;
+      text-align:center;
+    }
+    .note{
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid rgba(255,209,102,.28);
+      background:rgba(255,209,102,.09);
+      color:#fff2c7;
+      line-height:1.7;
+    }
+    .section-title{margin:26px 0 12px;font-size:1.35rem}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(20,42,77,.96),rgba(13,28,52,.98));
+      border-radius:24px;
+      padding:16px;
+      box-shadow:0 10px 28px rgba(0,0,0,.22);
+      overflow:hidden;
+    }
+    .card.full{grid-column:1/-1}
+    .card h2{margin:0 0 8px;font-size:1.18rem}
+    .desc{margin:0 0 14px;color:var(--muted);line-height:1.7}
+    .tag{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:999px;padding:5px 10px;font-size:.82rem;font-weight:800;margin:0 6px 10px 0;color:#dbe8ff}
+    .tag.ok{border-color:rgba(32,214,123,.35);color:#b8ffd9}
+    .tag.warn{border-color:rgba(255,209,102,.35);color:#ffe7a3}
+    .codebox{
+      display:block;
+      width:100%;
+      white-space:pre-wrap;
+      word-break:break-word;
+      margin:12px 0 0;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:#08111f;
+      color:#eaf2ff;
+      font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
+    }
+    .widget-box{
+      margin-top:12px;
+      padding:12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
+      background:#0b1220;
+      min-height:80px;
+    }
+    .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:10px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      text-decoration:none;
+      background:linear-gradient(180deg,#2f7fff,#1d61de);
+      color:white;
+      font-weight:900;
+      box-shadow:0 8px 20px rgba(47,127,255,.22);
+    }
+    .btn.secondary{background:rgba(255,255,255,.06);box-shadow:none}
+    .btn.disabled{background:rgba(255,255,255,.08);color:#aebdde;cursor:not-allowed;box-shadow:none}
+    .edit-line{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border-left:4px solid var(--ok);
+      background:rgba(32,214,123,.08);
+      border-radius:12px;
+      color:#dfffee;
+      line-height:1.6;
+    }
+    .warning-line{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border-left:4px solid var(--warn);
+      background:rgba(255,209,102,.08);
+      border-radius:12px;
+      color:#fff0bc;
+      line-height:1.6;
+    }
+    table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:16px;margin-top:12px}
+    th,td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top;line-height:1.55}
+    th{background:rgba(255,255,255,.07)}
+    td{color:#dfebff}
+    code{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:2px 6px;border-radius:8px;color:#fff}
+    .footer{margin-top:18px;color:var(--muted);text-align:center;line-height:1.65}
+    @media(max-width:760px){
+      .grid{grid-template-columns:1fr}
+      .quick-edit{grid-template-columns:1fr 1fr}
+      .card.full{grid-column:auto}
+      .hero{padding:18px}
+    }
+    @media(max-width:420px){.quick-edit{grid-template-columns:1fr}.page{padding-inline:10px}.card{padding:14px}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <img class="logo" src="./assets/logo.png" alt="MAHA289 Logo">
+      <h1 class="title">รวม Widgets สำหรับฝังเว็บ</h1>
+      <p class="subtitle">หน้านี้รวมตัวอย่าง Telegram + X ไว้ที่เดียว เพื่อให้ดูง่ายว่าแต่ละ widget เอาไว้ทำอะไร และแก้โค้ดตรงไหน</p>
+      <div class="quick-edit">
+        <a href="#telegram-post">Telegram Post</a>
+        <a href="#telegram-share">Telegram Share</a>
+        <a href="#telegram-discussion">Discussion</a>
+        <a href="#x-widgets">X / Twitter</a>
+      </div>
+      <div class="note">
+        วิธีใช้หน้านี้: เปลี่ยนเฉพาะค่าที่มีคำว่า <code>แก้ตรงนี้</code> ก่อน ยังไม่ต้องยุ่งกับระบบ Login จนกว่าจะมี backend.
+      </div>
+    </section>
+
+    <h2 class="section-title">1) Telegram Widgets</h2>
+    <section class="grid">
+      <article class="card" id="telegram-post">
+        <span class="tag ok">ใช้จริงก่อน</span>
+        <span class="tag">ฝังโพสต์</span>
+        <h2>Telegram Post Widget</h2>
+        <p class="desc">ใช้โชว์โพสต์จาก public channel หรือ public group ในหน้าเว็บ เช่น <code>t.me/telegram/81</code> ให้แปลงเป็น <code>telegram/81</code>.</p>
+        <div class="edit-line">แก้ตรงนี้: <code>data-telegram-post="telegram/81"</code> เป็น <code>ชื่อช่อง/เลขโพสต์</code></div>
+        <div class="widget-box">
+          <!-- TELEGRAM POST: แก้เฉพาะ telegram/81 เป็น channel/postId ของพี่ -->
+          <script async src="https://telegram.org/js/telegram-widget.js?22"
+            data-telegram-post="telegram/81"
+            data-width="100%"
+            data-dark="1">
+          </script>
+        </div>
+        <pre class="codebox">&lt;script async src="https://telegram.org/js/telegram-widget.js?22"
+  data-telegram-post="telegram/81"  &lt;!-- แก้ตรงนี้ --&gt;
+  data-width="100%"
+  data-dark="1"&gt;
+&lt;/script&gt;</pre>
+      </article>
+
+      <article class="card" id="telegram-share">
+        <span class="tag ok">ใช้จริงก่อน</span>
+        <span class="tag">ปุ่มแชร์</span>
+        <h2>Telegram Share Button</h2>
+        <p class="desc">ใช้ทำปุ่มให้คนกดแชร์ลิงก์เว็บหรือข้อความเข้า Telegram ได้ทันที</p>
+        <div class="edit-line">แก้ตรงนี้: <code>url</code> เป็นลิงก์เว็บพี่ และ <code>text</code> เป็นข้อความที่อยากให้แชร์</div>
+        <div class="btn-row">
+          <a class="btn" target="_blank" rel="noopener" href="https://t.me/share/url?url=https%3A%2F%2Fbn9.one&text=%E0%B8%A3%E0%B9%88%E0%B8%A7%E0%B8%A1%E0%B8%81%E0%B8%B4%E0%B8%88%E0%B8%81%E0%B8%A3%E0%B8%A3%E0%B8%A1%20BN9">แชร์ไป Telegram</a>
+          <a class="btn secondary" target="_blank" rel="noopener" href="https://t.me/bn9game">เปิดช่อง @bn9game</a>
+        </div>
+        <pre class="codebox">&lt;a href="https://t.me/share/url?url=https%3A%2F%2Fbn9.one&amp;text=ข้อความที่จะแชร์"
+   target="_blank" rel="noopener"&gt;
+  แชร์ไป Telegram
+&lt;/a&gt;</pre>
+      </article>
+
+      <article class="card" id="telegram-discussion">
+        <span class="tag warn">เก็บไว้ขั้นต่อไป</span>
+        <span class="tag">คอมเมนต์</span>
+        <h2>Telegram Discussion Widget</h2>
+        <p class="desc">ใช้ฝังคอมเมนต์/การสนทนาจากโพสต์ Telegram ที่เปิด comments แล้ว เหมาะกับหน้าบทความหรือหน้าแคมเปญที่อยากให้คนคุยกัน</p>
+        <div class="warning-line">ต้องใช้โพสต์ที่มี comments หรือ channel ที่ตั้ง discussion group ไว้ก่อน</div>
+        <div class="widget-box">
+          <!-- TELEGRAM DISCUSSION: ตัวอย่าง placeholder ถ้าโพสต์มี comments ให้เปลี่ยน telegram/81 เป็นโพสต์จริง -->
+          <script async src="https://telegram.org/js/telegram-widget.js?22"
+            data-telegram-discussion="telegram/81"
+            data-comments-limit="5"
+            data-height="360"
+            data-dark="1">
+          </script>
+        </div>
+        <pre class="codebox">&lt;script async src="https://telegram.org/js/telegram-widget.js?22"
+  data-telegram-discussion="telegram/81"  &lt;!-- แก้ตรงนี้ --&gt;
+  data-comments-limit="5"
+  data-height="360"
+  data-dark="1"&gt;
+&lt;/script&gt;</pre>
+      </article>
+
+      <article class="card" id="telegram-login">
+        <span class="tag warn">ยังไม่ทำตอนนี้</span>
+        <span class="tag">Login</span>
+        <h2>Telegram Login</h2>
+        <p class="desc">ตัวนี้ไม่ใช่แค่วางโค้ดแล้วจบ ต้องมี BotFather, Client ID, Allowed URLs และต้องตรวจ token ฝั่ง server ก่อนเชื่อข้อมูลผู้ใช้</p>
+        <div class="warning-line">สำหรับเว็บ static หน้าเดียว ให้ทำเป็นปุ่ม placeholder ก่อน อย่าเปิด Login จริงจนกว่าจะมี backend</div>
+        <div class="btn-row">
+          <a class="btn disabled" href="javascript:void(0)">Telegram Login: รอ Backend</a>
+        </div>
+        <pre class="codebox">// ขั้นตอนจริงภายหลัง
+1. สร้าง/เลือก Bot ใน BotFather
+2. ตั้ง Allowed URLs
+3. ได้ Client ID + Client Secret
+4. ฝัง Login library
+5. backend ต้อง verify id_token ก่อนใช้งาน</pre>
+      </article>
+    </section>
+
+    <h2 class="section-title" id="x-widgets">2) X / Twitter Widgets</h2>
+    <section class="grid">
+      <article class="card">
+        <span class="tag ok">ใช้จริงก่อน</span>
+        <span class="tag">Timeline</span>
+        <h2>X Profile Timeline</h2>
+        <p class="desc">ใช้โชว์ฟีดโพสต์จากบัญชี X แบบ public timeline</p>
+        <div class="edit-line">แก้ตรงนี้: เปลี่ยน <code>https://x.com/XDevelopers</code> เป็นบัญชี X ของพี่</div>
+        <div class="widget-box">
+          <!-- X TIMELINE: แก้ href เป็นบัญชี X ที่ต้องการ -->
+          <a class="twitter-timeline" data-theme="dark" data-height="420" href="https://x.com/XDevelopers">Posts by XDevelopers</a>
+        </div>
+        <pre class="codebox">&lt;a class="twitter-timeline"
+   data-theme="dark"
+   data-height="420"
+   href="https://x.com/XDevelopers"&gt;
+  Posts by XDevelopers
+&lt;/a&gt;</pre>
+      </article>
+
+      <article class="card">
+        <span class="tag ok">ใช้จริงก่อน</span>
+        <span class="tag">Share/Post</span>
+        <h2>X Share Button</h2>
+        <p class="desc">ใช้ทำปุ่มให้คนกดโพสต์ข้อความพร้อมลิงก์ไป X</p>
+        <div class="edit-line">แก้ตรงนี้: <code>text</code> และ <code>url</code></div>
+        <div class="btn-row">
+          <a class="btn" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text=%E0%B8%A3%E0%B9%88%E0%B8%A7%E0%B8%A1%E0%B8%81%E0%B8%B4%E0%B8%88%E0%B8%81%E0%B8%A3%E0%B8%A3%E0%B8%A1%20BN9&url=https%3A%2F%2Fbn9.one">แชร์ไป X</a>
+        </div>
+        <pre class="codebox">&lt;a href="https://twitter.com/intent/tweet?text=ข้อความ&amp;url=https%3A%2F%2Fbn9.one"
+   target="_blank" rel="noopener"&gt;
+  แชร์ไป X
+&lt;/a&gt;</pre>
+      </article>
+
+      <article class="card full">
+        <span class="tag">ฝังโพสต์เดี่ยว</span>
+        <h2>X Single Post Embed</h2>
+        <p class="desc">ใช้ฝังโพสต์ X เดี่ยว ถ้ามีลิงก์โพสต์จริง ให้เอาลิงก์มาใส่ใน <code>href</code></p>
+        <div class="warning-line">ตอนนี้ใส่ตัวอย่างโครงไว้ก่อน พี่ส่งลิงก์โพสต์จริงมาแล้วค่อยเปลี่ยน</div>
+        <pre class="codebox">&lt;blockquote class="twitter-tweet" data-theme="dark"&gt;
+  &lt;a href="https://x.com/USERNAME/status/POST_ID"&gt;&lt;/a&gt;
+&lt;/blockquote&gt;</pre>
+      </article>
+    </section>
+
+    <h2 class="section-title">3) ตารางสรุปว่าใช้ตัวไหนก่อน</h2>
+    <section class="card full">
+      <table>
+        <thead>
+          <tr>
+            <th>Widget</th>
+            <th>ใช้ทำอะไร</th>
+            <th>สถานะ</th>
+            <th>จุดที่ต้องแก้</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Telegram Post</td>
+            <td>ฝังโพสต์ Telegram</td>
+            <td>ทำก่อน</td>
+            <td><code>data-telegram-post="channel/postId"</code></td>
+          </tr>
+          <tr>
+            <td>Telegram Share</td>
+            <td>ปุ่มแชร์ลิงก์ไป Telegram</td>
+            <td>ทำก่อน</td>
+            <td><code>url</code> และ <code>text</code></td>
+          </tr>
+          <tr>
+            <td>Telegram Discussion</td>
+            <td>ฝังคอมเมนต์จากโพสต์</td>
+            <td>ทำทีหลัง</td>
+            <td><code>data-telegram-discussion</code></td>
+          </tr>
+          <tr>
+            <td>Telegram Login</td>
+            <td>ล็อกอินด้วย Telegram</td>
+            <td>รอ backend</td>
+            <td>Client ID / Allowed URLs / Verify token</td>
+          </tr>
+          <tr>
+            <td>X Timeline</td>
+            <td>โชว์ฟีด X จากบัญชี public</td>
+            <td>ทำก่อน</td>
+            <td><code>href="https://x.com/USERNAME"</code></td>
+          </tr>
+          <tr>
+            <td>X Share</td>
+            <td>ปุ่มโพสต์แชร์ไป X</td>
+            <td>ทำก่อน</td>
+            <td><code>text</code> และ <code>url</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="footer">
+      รวม Widgets Lab — ใช้สำหรับดูภาพรวมก่อนแยกไปใส่หน้า campaign จริง
+    </div>
+  </main>
+
+  <!-- X widgets script: ใส่ครั้งเดียวท้ายหน้า -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</body>
+</html>
