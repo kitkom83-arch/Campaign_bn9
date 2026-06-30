@@ -2,6 +2,12 @@
   "use strict";
 
   var SCRIPT_STATE = {};
+  var ACTION_ICON_MAP = {
+    reply: "\u21a9",
+    like: "\u2661",
+    repost: "\u21bb",
+    link: "\ud83d\udd17"
+  };
 
   function escapeHtml(value) {
     return String(value == null ? "" : value)
@@ -118,12 +124,13 @@
       hashtags: widget.hashtags || "",
       via: widget.via || "",
       postUrl: widget.postUrl || "",
-      profileUrl: widget.profileUrl || "",
+      profileUrl: widget.profileUrl || widget.listUrl || "",
+      embedUrl: widget.embedUrl || "",
       post: widget.post || "",
       channel: widget.channel || "",
       commentsLimit: widget.commentsLimit || 5,
       height: widget.height || 420,
-      dark: widget.dark !== false,
+      dark: widget.dark !== false
     };
   }
 
@@ -140,7 +147,7 @@
     btn.textContent = w.label || "Open";
 
     if (w.platform === "x" && w.type === "follow") {
-      btn.href = "https://x.com/intent/follow?screen_name=" + encodeURIComponent(w.username);
+      btn.href = "https://x.com/intent/follow?screen_name=" + encodeURIComponent(w.username || "");
       return btn;
     }
     if (w.platform === "x" && w.type === "share") {
@@ -158,11 +165,21 @@
       return btn;
     }
     if (w.platform === "x" && w.type === "mention") {
-      btn.href = "https://twitter.com/intent/tweet?screen_name=" + encodeURIComponent(w.username);
+      var mentionUrl = "https://twitter.com/intent/tweet?screen_name=" + encodeURIComponent(w.username || "");
+      if (w.text) {
+        mentionUrl += "&text=" + encodeURIComponent(w.text);
+      }
+      if (w.url) {
+        mentionUrl += "&url=" + encodeURIComponent(w.url);
+      }
+      btn.href = mentionUrl;
       return btn;
     }
     if (w.platform === "x" && w.type === "hashtag") {
       var hashtagUrl = "https://twitter.com/intent/tweet?button_hashtag=" + encodeURIComponent(w.hashtags || "");
+      if (w.text) {
+        hashtagUrl += "&text=" + encodeURIComponent(w.text);
+      }
       if (w.url) {
         hashtagUrl += "&url=" + encodeURIComponent(w.url);
       }
@@ -178,7 +195,7 @@
       return btn;
     }
     if (w.platform === "telegram" && w.type === "contact") {
-      btn.href = w.href || ("https://t.me/" + encodeURIComponent(w.channel));
+      btn.href = w.href || ("https://t.me/" + encodeURIComponent(w.channel || ""));
       return btn;
     }
     if (w.platform === "telegram" && w.type === "loginPlaceholder") {
@@ -187,11 +204,8 @@
       return btn;
     }
 
-    if (w.href) {
-      btn.href = w.href;
-      return btn;
-    }
-    return null;
+    btn.href = w.href || w.url || "#";
+    return btn;
   }
 
   function buildBody(bodyItems) {
@@ -234,19 +248,174 @@
         box.appendChild(link);
       }
     });
+
     return box;
   }
 
-  function buildEmbedCard(widget) {
-    var w = normalizeWidget(widget);
-    if (!w || !w.enabled) {
+  function buildActionIcons(actions) {
+    var wrap = document.createElement("div");
+    wrap.className = "campaign-actions";
+    var list = [];
+
+    if (Array.isArray(actions)) {
+      actions.forEach(function (item) {
+        if (typeof item === "string") {
+          list.push({ type: item, href: "" });
+          return;
+        }
+        if (item && item.type) {
+          list.push(item);
+        }
+      });
+    } else if (actions && typeof actions === "object") {
+      ["reply", "like", "repost", "link"].forEach(function (key) {
+        var conf = actions[key];
+        if (!conf) {
+          return;
+        }
+        list.push({
+          type: key,
+          href: conf.href || "",
+          enabled: conf.enabled !== false
+        });
+      });
+    }
+
+    list.forEach(function (action) {
+      var key = String(action.type || "").toLowerCase();
+      if (!ACTION_ICON_MAP[key]) {
+        return;
+      }
+      if (action.enabled === false) {
+        return;
+      }
+
+      var token = action.href ? document.createElement("a") : document.createElement("span");
+      token.className = "campaign-action";
+      token.textContent = ACTION_ICON_MAP[key];
+      token.setAttribute("title", key);
+      if (action.href) {
+        token.href = action.href;
+        token.target = "_blank";
+        token.rel = "noopener";
+      }
+      wrap.appendChild(token);
+    });
+    return wrap;
+  }
+
+  function normalizeNav(nav) {
+    var config = nav || {};
+    return {
+      backHref: config.backHref || "./index.html",
+      backText: config.backText || "\u2190 \u0e01\u0e25\u0e31\u0e1a\u0e40\u0e21\u0e19\u0e39",
+      prevHref: config.prevHref || "",
+      nextHref: config.nextHref || "",
+      prevText: config.prevText || "\u0e2b\u0e19\u0e49\u0e32\u0e01\u0e48\u0e2d\u0e19\u0e2b\u0e19\u0e49\u0e32",
+      nextText: config.nextText || "\u0e2b\u0e19\u0e49\u0e32\u0e16\u0e31\u0e14\u0e44\u0e1b"
+    };
+  }
+
+  function renderPageNav(config) {
+    var shell = document.querySelector(".campaign-page");
+    if (!shell) {
+      return;
+    }
+    var nav = normalizeNav(config && config.nav);
+
+    var existing = shell.querySelector(".campaign-nav");
+    if (existing) {
+      existing.remove();
+    }
+
+    var navWrap = document.createElement("nav");
+    navWrap.className = "campaign-nav";
+
+    var left = document.createElement("div");
+    left.className = "campaign-nav-left";
+    var back = document.createElement("a");
+    back.className = "nav-btn";
+    back.href = nav.backHref;
+    back.textContent = nav.backText;
+    left.appendChild(back);
+
+    var right = document.createElement("div");
+    right.className = "campaign-nav-right";
+
+    var prev = document.createElement("a");
+    prev.className = "nav-btn";
+    prev.href = nav.prevHref || "#";
+    prev.textContent = nav.prevText;
+    if (!nav.prevHref) {
+      prev.hidden = true;
+    }
+
+    var next = document.createElement("a");
+    next.className = "nav-btn";
+    next.href = nav.nextHref || "#";
+    next.textContent = nav.nextText;
+    if (!nav.nextHref) {
+      next.hidden = true;
+    }
+
+    right.appendChild(prev);
+    right.appendChild(next);
+    navWrap.appendChild(left);
+    navWrap.appendChild(right);
+    shell.insertBefore(navWrap, shell.firstChild);
+  }
+
+  function normalizeEmbedBalloon(item) {
+    var w = normalizeWidget(item);
+    if (!w) {
       return null;
     }
-    var isEmbedType =
-      (w.platform === "x" && (w.type === "embeddedPost" || w.type === "timeline")) ||
-      (w.platform === "telegram" && (w.type === "post" || w.type === "discussion"));
+    return {
+      enabled: w.enabled,
+      type: w.type,
+      label: w.label || "Embed Balloon",
+      theme: item.theme || "dark",
+      mediaMaxWidth: item.mediaMaxWidth || 0,
+      postUrl: w.postUrl,
+      profileUrl: w.profileUrl,
+      embedUrl: w.embedUrl,
+      height: w.height,
+      dark: w.dark
+    };
+  }
 
-    if (!isEmbedType) {
+  function getEmbedZone(config) {
+    var zone = config && config.embedZone ? config.embedZone : {};
+    var fromOld = Array.isArray(config && config.embedWidgets) ? config.embedWidgets : [];
+    var source = Array.isArray(zone.items)
+      ? zone.items
+      : (Array.isArray(zone.balloons) ? zone.balloons : fromOld);
+    var limit = Number(zone.maxItems || 2);
+    if (!Number.isFinite(limit) || limit <= 0) {
+      limit = 2;
+    }
+
+    return {
+      enabled: zone.enabled !== false,
+      maxItems: limit,
+      introText: zone.introText || "ในตรงนี้ เลือกใช้ได้",
+      bullets: Array.isArray(zone.bullets) ? zone.bullets : ["Embedded Video", "Embedded Post", "Embedded Timeline", "Embedded Broadcast"],
+      footerText: zone.footerText || zone.outroText || "1 หน้า 2 โพส สูงสุดในตรงนี้",
+      items: source.map(normalizeEmbedBalloon).filter(Boolean).slice(0, limit)
+    };
+  }
+
+  function buildEmbedBalloon(balloon) {
+    if (!balloon || !balloon.enabled) {
+      return null;
+    }
+    var allow = {
+      embeddedVideo: true,
+      embeddedPost: true,
+      embeddedTimeline: true,
+      embeddedBroadcast: true
+    };
+    if (!allow[balloon.type]) {
       return null;
     }
 
@@ -254,217 +423,201 @@
     card.className = "embed-card";
     var label = document.createElement("p");
     label.className = "embed-label";
-    label.textContent = w.label || "Widget";
+    label.textContent = balloon.label;
     var slot = document.createElement("div");
     slot.className = "embed-slot";
-    slot.setAttribute("data-platform", w.platform);
-    slot.setAttribute("data-type", w.type);
-    slot.setAttribute("data-payload", JSON.stringify(w));
+    slot.setAttribute("data-type", balloon.type);
+    slot.setAttribute("data-payload", JSON.stringify(balloon));
 
     card.appendChild(label);
     card.appendChild(slot);
     return card;
   }
 
-  function renderXEmbed(slot, widget) {
-    var w = normalizeWidget(widget);
-    if (w.type === "embeddedPost") {
-      slot.innerHTML =
-        '<blockquote class="twitter-tweet" data-theme="dark"><a href="' +
-        escapeHtml(w.postUrl) +
-        '"></a></blockquote>';
+  function renderEmbedSlot(slot, balloon) {
+    if (balloon.type === "embeddedBroadcast") {
+      addFallback(slot, "Embedded Broadcast placeholder: เพิ่มโค้ด/URL จริงใน PAGE_CONFIG");
       return;
     }
-    if (w.type === "timeline") {
-      slot.innerHTML =
-        '<a class="twitter-timeline" data-theme="dark" data-height="' +
-        escapeHtml(w.height) +
-        '" href="' +
-        escapeHtml(w.profileUrl) +
-        '">Timeline</a>';
-    }
-  }
 
-  function renderTelegramEmbed(slot, widget) {
-    var w = normalizeWidget(widget);
-    var script = document.createElement("script");
-    script.async = true;
-    script.src = "https://telegram.org/js/telegram-widget.js?22";
-    script.setAttribute("data-width", "100%");
-    if (w.dark) {
-      script.setAttribute("data-dark", "1");
-    }
-
-    if (w.type === "post") {
-      script.setAttribute("data-telegram-post", w.post);
-    } else if (w.type === "discussion") {
-      script.setAttribute("data-telegram-discussion", w.post);
-      script.setAttribute("data-comments-limit", String(w.commentsLimit));
-      script.setAttribute("data-height", String(w.height));
-    }
-
-    script.onerror = function () {
-      addFallback(slot, "Telegram widget โหลดไม่สำเร็จ โปรดตรวจ connection หรือค่าโพสต์ใน PAGE_CONFIG");
-    };
-
-    slot.appendChild(script);
-    window.setTimeout(function () {
-      if (!slot.querySelector("iframe")) {
-        addFallback(slot, "ไม่พบ Telegram widget หลังโหลด โปรดตรวจว่าโพสต์เป็น public และค่า post ถูกต้อง");
+    if (balloon.type === "embeddedVideo") {
+      if (!balloon.postUrl) {
+        addFallback(slot, "ยังไม่ได้ตั้ง postUrl ใน PAGE_CONFIG");
+        return;
       }
-    }, 6000);
+      slot.innerHTML = '<blockquote class="twitter-tweet" data-theme="' + escapeHtml(balloon.theme || "dark") + '" data-width="' + escapeHtml(balloon.mediaMaxWidth || "") + '"><a href="' + escapeHtml(balloon.postUrl) + '"></a></blockquote>';
+      return;
+    }
+
+    if (balloon.type === "embeddedPost") {
+      if (!balloon.postUrl) {
+        addFallback(slot, "ยังไม่ได้ตั้ง postUrl ใน PAGE_CONFIG");
+        return;
+      }
+      slot.innerHTML = '<blockquote class="twitter-tweet" data-theme="' + escapeHtml(balloon.theme || "dark") + '" data-width="' + escapeHtml(balloon.mediaMaxWidth || "") + '"><a href="' + escapeHtml(balloon.postUrl) + '"></a></blockquote>';
+      return;
+    }
+
+    if (balloon.type === "embeddedTimeline") {
+      if (!balloon.profileUrl) {
+        addFallback(slot, "ยังไม่ได้ตั้ง profileUrl/listUrl ใน PAGE_CONFIG");
+        return;
+      }
+      slot.innerHTML = '<a class="twitter-timeline" data-theme="' + escapeHtml(balloon.theme || "dark") + '" data-height="' + escapeHtml(balloon.height || 420) + '" href="' + escapeHtml(balloon.profileUrl) + '">Timeline</a>';
+    }
   }
 
-  function hydrateEmbedWidgets(root, hasXWidgets) {
+  function hydrateEmbedSlots(root) {
     var slots = root.querySelectorAll(".embed-slot");
-    if (!slots.length) {
-      if (hasXWidgets) {
-        loadScriptOnce("x-widgets", "https://platform.x.com/widgets.js", 7000).then(function (ok) {
-          if (!ok) {
-            var row = root.querySelector("#widget-row-slot") || root.querySelector("#widget-top-slot");
-            addFallback(row, "X widget script โหลดไม่สำเร็จ โปรดตรวจ connection หรือปิด script blocker");
-          }
-        });
-      }
-      return;
-    }
-
-    var requireX = hasXWidgets === true;
-    slots.forEach(function (slot) {
-      if (slot.getAttribute("data-platform") === "x") {
-        requireX = true;
-      }
-    });
+    var requireX = false;
 
     slots.forEach(function (slot) {
       var payload = slot.getAttribute("data-payload");
       if (!payload) {
         return;
       }
-      var widget = JSON.parse(payload);
-      if (widget.platform === "x") {
-        renderXEmbed(slot, widget);
-      } else if (widget.platform === "telegram") {
-        renderTelegramEmbed(slot, widget);
+      var balloon = JSON.parse(payload);
+      if (balloon.type === "embeddedPost" || balloon.type === "embeddedTimeline") {
+        requireX = true;
       }
+      renderEmbedSlot(slot, balloon);
     });
 
-    if (requireX) {
-      loadScriptOnce("x-widgets", "https://platform.x.com/widgets.js", 7000).then(function (ok) {
-        if (!ok) {
-          var hasXEmbed = false;
-          slots.forEach(function (slot) {
-            if (slot.getAttribute("data-platform") === "x") {
-              hasXEmbed = true;
-              addFallback(slot, "X widget โหลดไม่สำเร็จ โปรดตรวจ connection หรือปิด script blocker");
-            }
-          });
-          if (!hasXEmbed) {
-            var row = root.querySelector("#widget-row-slot") || root.querySelector("#widget-top-slot");
-            addFallback(row, "X widget script โหลดไม่สำเร็จ โปรดตรวจ connection หรือปิด script blocker");
-          }
-        }
-      });
-    }
-  }
-
-  function renderCampaignPage(config) {
-    applySeo(config && config.seo);
-
-    var root = document.getElementById("campaign-root");
-    if (!root) {
+    if (!requireX) {
       return;
     }
 
-    var brand = (config && config.brand) || {};
-    var topWidget = normalizeWidget(config && config.topWidget);
-    var subWidgets = Array.isArray(config && config.subWidgets) ? config.subWidgets : [];
-    var embedWidgets = Array.isArray(config && config.embedWidgets) ? config.embedWidgets : [];
-    var bullets = (config && config.bulletBox && Array.isArray(config.bulletBox.items)) ? config.bulletBox.items : [];
-    var bulletEnabled = Boolean(config && config.bulletBox && config.bulletBox.enabled);
-    var hero = (config && config.hero) || {};
-    var cta = (config && config.cta) || {};
-
-    root.innerHTML =
-      '<header class="campaign-top">' +
-      '<img class="campaign-logo" src="' + escapeHtml(brand.logoSrc || "") + '" alt="' + escapeHtml(brand.logoAlt || "logo") + '">' +
-      '<div class="widget-top-slot" id="widget-top-slot"></div>' +
-      "</header>" +
-      '<div class="campaign-divider"></div>' +
-      (bulletEnabled && bullets.length
-        ? '<section class="bullet-box"><ul class="bullet-list">' +
-          bullets.map(function (item) { return "<li>" + escapeHtml(item) + "</li>"; }).join("") +
-          "</ul></section>"
-        : "") +
-      '<section class="campaign-content">' +
-      '<h1 class="campaign-title">' + escapeHtml(hero.title || "") + "</h1>" +
-      '<div id="campaign-body-slot"></div>' +
-      '<div class="widget-row" id="widget-row-slot"></div>' +
-      '<div class="embed-grid" id="embed-grid-slot"></div>' +
-      "</section>";
-
-    var topSlot = root.querySelector("#widget-top-slot");
-    var topButton = buildWidgetButton(topWidget);
-    if (topButton) {
-      topSlot.appendChild(topButton);
-    }
-
-    var bodySlot = root.querySelector("#campaign-body-slot");
-    bodySlot.appendChild(buildBody(config && config.campaignBody));
-
-    var rowSlot = root.querySelector("#widget-row-slot");
-    subWidgets.forEach(function (widget) {
-      var button = buildWidgetButton(widget);
-      if (button) {
-        rowSlot.appendChild(button);
+    loadScriptOnce("x-widgets", "https://platform.x.com/widgets.js", 7000).then(function (ok) {
+      if (!ok) {
+        slots.forEach(function (slot) {
+          var payload = slot.getAttribute("data-payload");
+          if (!payload) {
+            return;
+          }
+          var balloon = JSON.parse(payload);
+          if (balloon.type === "embeddedPost" || balloon.type === "embeddedTimeline") {
+            addFallback(slot, "X widget โหลดไม่สำเร็จ โปรดตรวจ connection หรือปิด script blocker");
+          }
+        });
       }
     });
+  }
 
-    var embedSlot = root.querySelector("#embed-grid-slot");
-    embedWidgets.forEach(function (widget) {
-      var card = buildEmbedCard(widget);
-      if (card) {
-        embedSlot.appendChild(card);
+  function renderCampaignPage(config) {
+    try {
+      applySeo(config && config.seo);
+
+      var root = document.getElementById("campaign-root");
+      if (!root) {
+        return;
       }
-    });
 
-    var oldCta = document.querySelector(".floating-cta");
-    if (oldCta) {
-      oldCta.remove();
-    }
-    var ctaBtn = document.createElement("a");
-    ctaBtn.className = "floating-cta";
-    ctaBtn.textContent = cta.text || "";
-    ctaBtn.href = cta.href || "#";
-    if (!cta.enabled) {
-      ctaBtn.hidden = true;
-    }
-    ctaBtn.target = "_blank";
-    ctaBtn.rel = "noopener";
-    document.body.appendChild(ctaBtn);
+      renderPageNav(config);
 
-    var allWidgets = [];
-    if (topWidget && topWidget.enabled) {
-      allWidgets.push(topWidget);
-    }
-    subWidgets.forEach(function (widget) {
-      var normalized = normalizeWidget(widget);
-      if (normalized && normalized.enabled) {
-        allWidgets.push(normalized);
+      var brand = (config && config.brand) || {};
+      var topButton = normalizeWidget((config && config.topButton) || (config && config.topWidget));
+      var subButtons = Array.isArray(config && config.subButtons)
+        ? config.subButtons
+        : (Array.isArray(config && config.subWidgets) ? config.subWidgets : []);
+      var embedZone = getEmbedZone(config);
+      var campaign = (config && config.campaign) || {};
+      var cta = (config && config.cta) || {};
+
+      root.innerHTML =
+        '<header class="campaign-top">' +
+        '<div class="campaign-brand">' +
+        '<img class="campaign-logo" id="campaign-logo" src="' + escapeHtml(brand.logoSrc || "") + '" alt="' + escapeHtml(brand.logoAlt || "BN9.ONE") + '">' +
+        '<span class="campaign-logo-fallback" id="campaign-logo-fallback" hidden>' + escapeHtml(brand.logoAlt || "BN9.ONE") + "</span>" +
+        "</div>" +
+        '<div class="widget-top-slot" id="widget-top-slot"></div>' +
+        "</header>" +
+        '<div class="campaign-divider"></div>' +
+        '<section class="hero-box">' +
+        '<p class="hero-intro">' + escapeHtml(embedZone.introText) + "</p>" +
+        '<ul class="bullet-list">' +
+        embedZone.bullets.map(function (item) { return "<li>" + escapeHtml(item || "") + "</li>"; }).join("") +
+        "</ul>" +
+        '<p class="hero-outro">' + escapeHtml(embedZone.footerText) + "</p>" +
+        '<div class="embed-grid" id="embed-grid-slot"></div>' +
+        "</section>" +
+        '<div class="campaign-divider"></div>' +
+        '<section class="campaign-content">' +
+        '<h1 class="campaign-title">' + escapeHtml(campaign.title || "") + "</h1>" +
+        '<div class="campaign-actions" id="campaign-actions-slot"></div>' +
+        '<p class="campaign-subtitle">' + escapeHtml(campaign.subtitle || "") + "</p>" +
+        '<div id="campaign-body-slot"></div>' +
+        '<div class="widget-row" id="widget-row-slot"></div>' +
+        "</section>";
+
+      var logo = root.querySelector("#campaign-logo");
+      var logoFallback = root.querySelector("#campaign-logo-fallback");
+      if (logo) {
+        logo.onerror = function () {
+          logo.hidden = true;
+          if (logoFallback) {
+            logoFallback.hidden = false;
+          }
+        };
+        if (!logo.getAttribute("src")) {
+          logo.hidden = true;
+          if (logoFallback) {
+            logoFallback.hidden = false;
+          }
+        }
       }
-    });
-    embedWidgets.forEach(function (widget) {
-      var normalizedEmbed = normalizeWidget(widget);
-      if (normalizedEmbed && normalizedEmbed.enabled) {
-        allWidgets.push(normalizedEmbed);
+
+      var topSlot = root.querySelector("#widget-top-slot");
+      var topBtnNode = buildWidgetButton(topButton);
+      if (topBtnNode) {
+        topSlot.appendChild(topBtnNode);
       }
-    });
 
-    var hasXWidgets = allWidgets.some(function (widget) {
-      return widget.platform === "x";
-    });
+      var embedGrid = root.querySelector("#embed-grid-slot");
+      if (embedZone.enabled) {
+        embedZone.items.forEach(function (balloon) {
+          var card = buildEmbedBalloon(balloon);
+          if (card) {
+            embedGrid.appendChild(card);
+          }
+        });
+      }
 
-    hydrateEmbedWidgets(root, hasXWidgets);
+      var actionSlot = root.querySelector("#campaign-actions-slot");
+      actionSlot.replaceWith(buildActionIcons(campaign.actions));
+
+      var bodySlot = root.querySelector("#campaign-body-slot");
+      bodySlot.appendChild(buildBody(campaign.body));
+
+      var rowSlot = root.querySelector("#widget-row-slot");
+      subButtons.forEach(function (buttonConfig) {
+        var button = buildWidgetButton(buttonConfig);
+        if (button) {
+          rowSlot.appendChild(button);
+        }
+      });
+
+      var oldCta = root.querySelector(".floating-cta");
+      if (oldCta) {
+        oldCta.remove();
+      }
+      var ctaBtn = document.createElement("a");
+      ctaBtn.className = "floating-cta";
+      ctaBtn.textContent = (cta.text || "ส่งกิจกรรม") + " \u2192";
+      ctaBtn.href = cta.href || "#";
+      if (!cta.enabled) {
+        ctaBtn.hidden = true;
+      }
+      ctaBtn.target = "_blank";
+      ctaBtn.rel = "noopener";
+      root.appendChild(ctaBtn);
+
+      hydrateEmbedSlots(root);
+    } catch (error) {
+      var rootFallback = document.getElementById("campaign-root");
+      if (rootFallback) {
+        rootFallback.innerHTML = '<section class="campaign-content"><h1 class="campaign-title">BN9.ONE</h1><p class="campaign-subtitle">ไม่สามารถเรนเดอร์หน้าเทมเพลตได้ โปรดตรวจ PAGE_CONFIG</p><p class="campaign-body">' + escapeHtml(error && error.message ? error.message : "Unknown error") + "</p></section>";
+      }
+    }
   }
 
   window.renderCampaignPage = renderCampaignPage;

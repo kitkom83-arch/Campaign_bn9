@@ -5,67 +5,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
     const PAGE_CONFIG = {
+      menuTitle: "เครดิตฟรี 50 สมาชิกใหม่ - กิจกรรม Share",
       seo: {
-        title: "X Share Campaign Template",
-        description: "Template สำหรับปุ่ม Share บน X",
-        keywords: "x,share,campaign,template",
-        ogTitle: "X Share Campaign Template",
-        ogDescription: "แก้ค่าจาก PAGE_CONFIG ได้ทั้งหมด",
+        title: "เครดิตฟรี 50 สมาชิกใหม่ - Share",
+        description: "กิจกรรม Share X สำหรับเครดิตฟรี 50 สมาชิกใหม่",
+        keywords: "เครดิตฟรี50,share,x,kitkom88",
+        ogTitle: "เครดิตฟรี 50 สมาชิกใหม่ - กิจกรรม Share",
+        ogDescription: "แชร์กิจกรรมพร้อมแฮชแท็กเพื่อรับเครดิตฟรี 50",
         ogImage: ""
       },
       brand: {
         logoSrc: "../assets/logo.png",
-        logoAlt: "Campaign Logo"
+        logoAlt: "BN9"
       },
-      topWidget: {
+      nav: {
+        backHref: "./index.html",
+        backText: "← กลับเมนู",
+        prevHref: "./x-follow.html",
+        nextHref: "./x-mention.html"
+      },
+      topButton: {
         enabled: true,
         platform: "x",
         type: "share",
-        label: "แชร์โพสต์แคมเปญ",
-        text: "ร่วมกิจกรรมรับสิทธิ์วันนี้",
-        url: "https://example.com/campaign/x-share",
-        hashtags: "campaign,bonus"
+        label: "Share Button",
+        text: "เครดิตฟรี 50 สมาชิกใหม่",
+        url: "https://bn9.one",
+        hashtags: "เครดิตฟรี50,เครดิตฟรีล่าสุด,เครดิตฟรี100,เครดิตฟรี,เครดิตฟรีสมาชิกใหม่,เครดิตฟรีกรอกโค้ด"
       },
-      bulletBox: {
+      embedZone: {
         enabled: true,
+        maxItems: 2,
+        introText: "ในตรงนี้ เลือกใช้ได้",
+        bullets: ["Embedded Video", "Embedded Post", "Embedded Timeline", "Embedded Broadcast"],
+        footerText: "1 หน้า 2 โพส สูงสุดในตรงนี้",
         items: [
-          "กดแชร์โพสต์ตามข้อความที่กำหนด",
-          "ติดแฮชแท็กตามเงื่อนไข",
-          "ส่งหลักฐานการแชร์"
+          {
+            enabled: true,
+            type: "embeddedPost",
+            label: "Embedded Post",
+            postUrl: "https://x.com/kitkom88/status/2066535781330743492",
+            theme: "dark",
+            mediaMaxWidth: 560
+          },
+          {
+            enabled: false,
+            type: "embeddedTimeline",
+            label: "Embedded Timeline",
+            profileUrl: "https://x.com/kitkom88",
+            theme: "dark",
+            height: 520
+          }
         ]
       },
-      hero: {
-        title: "Campaign: Share บน X",
-        subtitle: ""
+      campaign: {
+        title: "เครดิตฟรี 50 สมาชิกใหม่",
+        actions: {
+          reply: { enabled: true, href: "https://x.com/intent/tweet?screen_name=kitkom88" },
+          like: { enabled: true, href: "https://x.com/kitkom88/status/2066535781330743492" },
+          repost: { enabled: true, href: "https://x.com/kitkom88/status/2066535781330743492" },
+          link: { enabled: true, href: "https://bn9.one" }
+        },
+        subtitle: "รายละเอียดแคมเปญ",
+        body: [
+          { type: "bold", value: "เครดิตฟรี 50 สมาชิกใหม่" },
+          { type: "lineBreak" },
+          { type: "text", value: "ทำยอด 300 ถอน 100" },
+          { type: "lineBreak" },
+          { type: "text", value: "โค้ดรับเครดิตฟรี 50฿" },
+          { type: "lineBreak" },
+          { type: "bold", value: "PGEH-FREE50" },
+          { type: "lineBreak" },
+          { type: "light", value: "เฉพาะสมาชิกใหม่เท่านั้น" },
+          { type: "lineBreak" },
+          { type: "text", value: "กดหัวใจ + รีโพสต์" },
+          { type: "lineBreak" },
+          { type: "link", text: "สมัครที่ bn9.one", href: "https://bn9.one" }
+        ]
       },
-      campaignBody: [
-        { type: "text", value: "ใช้หน้าเทมเพลตนี้สำหรับ " },
-        { type: "bold", value: "Share Button" },
-        { type: "text", value: " โดยตั้งข้อความ ลิงก์ และ hashtag ได้จาก config" },
-        { type: "lineBreak" },
-        { type: "link", text: "ดูตัวอย่างลิงก์แคมเปญ", href: "https://example.com/campaign/x-share" }
-      ],
-      subWidgets: [
+      subButtons: [
         {
           enabled: true,
           platform: "x",
           type: "hashtag",
-          label: "โพสต์พร้อม #campaign",
-          hashtags: "campaign",
-          url: "https://example.com/campaign/x-share"
+          label: "Hashtag Button",
+          hashtags: "เครดิตฟรี50,เครดิตฟรีล่าสุด,เครดิตฟรี100,เครดิตฟรี,เครดิตฟรีสมาชิกใหม่,เครดิตฟรีกรอกโค้ด",
+          text: "เครดิตฟรี 50 สมาชิกใหม่",
+          url: "https://bn9.one"
+        },
+        {
+          enabled: true,
+          platform: "x",
+          type: "mention",
+          label: "Mention Button",
+          username: "kitkom88",
+          text: "ส่งหลักฐานกิจกรรมเครดิตฟรี 50 สมาชิกใหม่"
         }
       ],
-      embedWidgets: [],
       cta: {
         enabled: true,
-        text: "ไปหน้าส่งหลักฐาน",
-        href: "https://example.com/submit"
+        text: "ส่งกิจกรรม",
+        href: "https://t.me/bn9game"
       }
     };
   </script>
   <title>Loading</title>
   <link rel="stylesheet" href="./template-shell.css" />
-  <script defer src="./template-renderer.js"></script>
+  <script src="./template-renderer.js"></script>
 </head>
 <body>
   <main class="campaign-page">
