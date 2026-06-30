@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    const PAGE_CONFIG = {
+      seo: {
+        title: "X Mention Campaign Template",
+        description: "Template สำหรับ Mention Button บน X",
+        keywords: "x,mention,campaign,template",
+        ogTitle: "X Mention Campaign Template",
+        ogDescription: "แก้ค่าที่ PAGE_CONFIG แล้วพร้อมใช้",
+        ogImage: ""
+      },
+      brand: {
+        logoSrc: "../assets/logo.png",
+        logoAlt: "Campaign Logo"
+      },
+      topWidget: {
+        enabled: true,
+        platform: "x",
+        type: "mention",
+        label: "Mention @XDevelopers",
+        username: "XDevelopers"
+      },
+      bulletBox: {
+        enabled: true,
+        items: [
+          "โพสต์ข้อความพร้อม mention",
+          "แนบรูปหรือข้อความตามโจทย์",
+          "ส่ง URL โพสต์เป็นหลักฐาน"
+        ]
+      },
+      hero: {
+        title: "Campaign: Mention บน X",
+        subtitle: ""
+      },
+      campaignBody: [
+        { type: "text", value: "หน้าตัวอย่างนี้รองรับ " },
+        { type: "bold", value: "Mention Button" },
+        { type: "text", value: " เพื่อเปิด intent tweet ที่มีบัญชีเป้าหมาย" },
+        { type: "lineBreak" },
+        { type: "light", value: "แก้ username, ปุ่ม, SEO และ CTA จาก PAGE_CONFIG ได้ทันที" }
+      ],
+      subWidgets: [
+        {
+          enabled: true,
+          platform: "x",
+          type: "share",
+          label: "โพสต์ข้อความแคมเปญ",
+          text: "เข้าร่วมแคมเปญ mention แล้ว",
+          url: "https://example.com/campaign/x-mention"
+        }
+      ],
+      embedWidgets: [],
+      cta: {
+        enabled: true,
+        text: "ส่ง URL โพสต์",
+        href: "https://example.com/submit"
+      }
+    };
+  </script>
+  <title>Loading</title>
+  <link rel="stylesheet" href="./template-shell.css" />
+  <script defer src="./template-renderer.js"></script>
+</head>
+<body>
+  <main class="campaign-page">
+    <section id="campaign-root" class="campaign-shell"></section>
+  </main>
+  <script>
+    window.renderCampaignPage(PAGE_CONFIG);
+  </script>
+</body>
+</html>

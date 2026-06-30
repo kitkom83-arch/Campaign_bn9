@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    const PAGE_CONFIG = {
+      seo: {
+        title: "Telegram Discussion Campaign Template",
+        description: "Template สำหรับ Telegram Discussion Widget",
+        keywords: "telegram,discussion,campaign,template",
+        ogTitle: "Telegram Discussion Campaign Template",
+        ogDescription: "รองรับ discussion แบบ optional ด้วย enabled",
+        ogImage: ""
+      },
+      brand: {
+        logoSrc: "../assets/logo.png",
+        logoAlt: "Campaign Logo"
+      },
+      topWidget: {
+        enabled: true,
+        platform: "telegram",
+        type: "share",
+        label: "แชร์กิจกรรมนี้",
+        text: "ร่วมคุยใน Discussion",
+        url: "https://example.com/campaign/tg-discussion"
+      },
+      bulletBox: {
+        enabled: true,
+        items: [
+          "โพสต์ต้องเป็น public",
+          "discussion ต้องเปิดใช้งานในช่อง",
+          "สลับ enabled เพื่อเปิด/ปิด discussion ได้ทันที"
+        ]
+      },
+      hero: {
+        title: "Campaign: Telegram Discussion (Optional)",
+        subtitle: ""
+      },
+      campaignBody: [
+        { type: "text", value: "หน้านี้รองรับ " },
+        { type: "bold", value: "Discussion Widget" },
+        { type: "text", value: " และสามารถปิดการแสดงผลได้เมื่อไม่ต้องการใช้งาน" },
+        { type: "lineBreak" },
+        { type: "light", value: "ถ้าโพสต์ไม่มีคอมเมนต์ ระบบจะแสดง fallback message" }
+      ],
+      subWidgets: [
+        {
+          enabled: true,
+          platform: "telegram",
+          type: "contact",
+          label: "เปิดช่องหลัก",
+          href: "https://t.me/telegram"
+        }
+      ],
+      embedWidgets: [
+        {
+          enabled: true,
+          platform: "telegram",
+          type: "discussion",
+          label: "Discussion Widget",
+          post: "telegram/81",
+          commentsLimit: 5,
+          height: 360,
+          dark: true
+        }
+      ],
+      cta: {
+        enabled: true,
+        text: "ส่งหลักฐานเข้าร่วม",
+        href: "https://example.com/submit"
+      }
+    };
+  </script>
+  <title>Loading</title>
+  <link rel="stylesheet" href="./template-shell.css" />
+  <script defer src="./template-renderer.js"></script>
+</head>
+<body>
+  <main class="campaign-page">
+    <section id="campaign-root" class="campaign-shell"></section>
+  </main>
+  <script>
+    window.renderCampaignPage(PAGE_CONFIG);
+  </script>
+</body>
+</html>

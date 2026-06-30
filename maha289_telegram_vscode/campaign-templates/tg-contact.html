@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    const PAGE_CONFIG = {
+      seo: {
+        title: "Telegram Contact Campaign Template",
+        description: "Template สำหรับ Contact / Open Channel บน Telegram",
+        keywords: "telegram,contact,channel,campaign,template",
+        ogTitle: "Telegram Contact Campaign Template",
+        ogDescription: "รองรับปุ่มเปิดช่องและปุ่มย่อยจาก PAGE_CONFIG",
+        ogImage: ""
+      },
+      brand: {
+        logoSrc: "../assets/logo.png",
+        logoAlt: "Campaign Logo"
+      },
+      topWidget: {
+        enabled: true,
+        platform: "telegram",
+        type: "contact",
+        label: "เปิด Channel หลัก",
+        href: "https://t.me/telegram"
+      },
+      bulletBox: {
+        enabled: true,
+        items: [
+          "กดเปิดช่อง Telegram จากปุ่มด้านบน",
+          "ตรวจสอบข่าวสารแคมเปญล่าสุด",
+          "ใช้ปุ่มย่อยเพื่อเปิดช่องสำรอง"
+        ]
+      },
+      hero: {
+        title: "Campaign: Contact / Open Channel",
+        subtitle: ""
+      },
+      campaignBody: [
+        { type: "text", value: "หน้านี้รองรับ " },
+        { type: "bold", value: "Contact / Open Channel Button" },
+        { type: "text", value: " สำหรับนำผู้ใช้ไปยังช่อง Telegram ที่กำหนด" },
+        { type: "lineBreak" },
+        { type: "link", text: "ตัวอย่างช่องหลัก", href: "https://t.me/telegram" }
+      ],
+      subWidgets: [
+        {
+          enabled: true,
+          platform: "telegram",
+          type: "share",
+          label: "แชร์ลิงก์ช่องให้เพื่อน",
+          text: "ช่องข่าวสารแคมเปญ",
+          url: "https://t.me/telegram"
+        },
+        {
+          enabled: true,
+          platform: "telegram",
+          type: "contact",
+          label: "เปิดช่องสำรอง",
+          href: "https://t.me/durov"
+        }
+      ],
+      embedWidgets: [],
+      cta: {
+        enabled: true,
+        text: "ไปหน้าส่งหลักฐาน",
+        href: "https://example.com/submit"
+      }
+    };
+  </script>
+  <title>Loading</title>
+  <link rel="stylesheet" href="./template-shell.css" />
+  <script defer src="./template-renderer.js"></script>
+</head>
+<body>
+  <main class="campaign-page">
+    <section id="campaign-root" class="campaign-shell"></section>
+  </main>
+  <script>
+    window.renderCampaignPage(PAGE_CONFIG);
+  </script>
+</body>
+</html>

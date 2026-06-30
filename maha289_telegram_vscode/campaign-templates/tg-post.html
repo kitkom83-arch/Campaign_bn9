@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    const PAGE_CONFIG = {
+      seo: {
+        title: "Telegram Post Campaign Template",
+        description: "Template สำหรับ Telegram Post Widget",
+        keywords: "telegram,post,widget,campaign,template",
+        ogTitle: "Telegram Post Campaign Template",
+        ogDescription: "แก้เฉพาะ PAGE_CONFIG เพื่อเปลี่ยนโพสต์และข้อความ",
+        ogImage: ""
+      },
+      brand: {
+        logoSrc: "../assets/logo.png",
+        logoAlt: "Campaign Logo"
+      },
+      topWidget: {
+        enabled: true,
+        platform: "telegram",
+        type: "share",
+        label: "แชร์แคมเปญไป Telegram",
+        text: "ร่วมกิจกรรม Telegram วันนี้",
+        url: "https://example.com/campaign/tg-post"
+      },
+      bulletBox: {
+        enabled: true,
+        items: [
+          "เปิดอ่านโพสต์ Telegram ที่กำหนด",
+          "ทำตามเงื่อนไขในโพสต์",
+          "ส่งหลักฐานกลับในช่องทางที่กำหนด"
+        ]
+      },
+      hero: {
+        title: "Campaign: Telegram Post",
+        subtitle: ""
+      },
+      campaignBody: [
+        { type: "text", value: "หน้านี้รองรับ " },
+        { type: "bold", value: "Post Widget" },
+        { type: "text", value: " โดยแก้ค่า post เป็นรูปแบบ channel/postId" },
+        { type: "lineBreak" },
+        { type: "light", value: "เปิด/ปิดการแสดงผล widget ได้ด้วย enabled" }
+      ],
+      subWidgets: [
+        {
+          enabled: true,
+          platform: "telegram",
+          type: "contact",
+          label: "เปิดช่องหลัก",
+          href: "https://t.me/telegram"
+        }
+      ],
+      embedWidgets: [
+        {
+          enabled: true,
+          platform: "telegram",
+          type: "post",
+          label: "Telegram Post",
+          post: "telegram/81",
+          dark: true
+        }
+      ],
+      cta: {
+        enabled: true,
+        text: "ส่งหลักฐานแคมเปญ",
+        href: "https://example.com/submit"
+      }
+    };
+  </script>
+  <title>Loading</title>
+  <link rel="stylesheet" href="./template-shell.css" />
+  <script defer src="./template-renderer.js"></script>
+</head>
+<body>
+  <main class="campaign-page">
+    <section id="campaign-root" class="campaign-shell"></section>
+  </main>
+  <script>
+    window.renderCampaignPage(PAGE_CONFIG);
+  </script>
+</body>
+</html>
