@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    const PAGE_CONFIG = {
+      seo: {
+        title: "Telegram Login Placeholder Template",
+        description: "Template สำหรับ Telegram Login แบบ placeholder เท่านั้น",
+        keywords: "telegram,login,placeholder,campaign,template",
+        ogTitle: "Telegram Login Placeholder Template",
+        ogDescription: "ไม่มีการทำ login จริงในหน้า static นี้",
+        ogImage: ""
+      },
+      brand: {
+        logoSrc: "../assets/logo.png",
+        logoAlt: "Campaign Logo"
+      },
+      topWidget: {
+        enabled: true,
+        platform: "telegram",
+        type: "loginPlaceholder",
+        label: "Telegram Login (Placeholder)"
+      },
+      bulletBox: {
+        enabled: true,
+        items: [
+          "หน้านี้ทำ placeholder เท่านั้น",
+          "ห้ามใช้ login จริงโดยไม่มี backend verify",
+          "ใช้ปุ่มนี้เป็นตัวแทน UI สำหรับดีไซน์"
+        ]
+      },
+      hero: {
+        title: "Campaign: Telegram Login Placeholder",
+        subtitle: ""
+      },
+      campaignBody: [
+        { type: "text", value: "เทมเพลตนี้สร้างไว้สำหรับ " },
+        { type: "bold", value: "Login Placeholder" },
+        { type: "text", value: " เพื่อใช้งานฝั่ง UI เท่านั้น" },
+        { type: "lineBreak" },
+        { type: "light", value: "ไม่มีการเชื่อม backend และไม่มีการตรวจ token จริง" }
+      ],
+      subWidgets: [
+        {
+          enabled: true,
+          platform: "telegram",
+          type: "contact",
+          label: "ติดต่อช่องหลัก",
+          href: "https://t.me/telegram"
+        }
+      ],
+      embedWidgets: [],
+      cta: {
+        enabled: true,
+        text: "อ่านกติกาก่อนใช้งาน",
+        href: "https://example.com/rules"
+      }
+    };
+  </script>
+  <title>Loading</title>
+  <link rel="stylesheet" href="./template-shell.css" />
+  <script defer src="./template-renderer.js"></script>
+</head>
+<body>
+  <main class="campaign-page">
+    <section id="campaign-root" class="campaign-shell"></section>
+  </main>
+  <script>
+    window.renderCampaignPage(PAGE_CONFIG);
+  </script>
+</body>
+</html>

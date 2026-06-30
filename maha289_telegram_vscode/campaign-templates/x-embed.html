@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    const PAGE_CONFIG = {
+      seo: {
+        title: "X Embedded Campaign Template",
+        description: "Template สำหรับ Embedded Post และ Timeline บน X",
+        keywords: "x,embedded post,timeline,campaign,template",
+        ogTitle: "X Embedded Campaign Template",
+        ogDescription: "รองรับ embeddedPost และ timeline จาก PAGE_CONFIG",
+        ogImage: ""
+      },
+      brand: {
+        logoSrc: "../assets/logo.png",
+        logoAlt: "Campaign Logo"
+      },
+      topWidget: {
+        enabled: true,
+        platform: "x",
+        type: "share",
+        label: "แชร์แคมเปญไป X",
+        text: "ดูโพสต์แคมเปญล่าสุด",
+        url: "https://example.com/campaign/x-embed"
+      },
+      bulletBox: {
+        enabled: true,
+        items: [
+          "ดูโพสต์ตัวอย่างในหน้าเดียว",
+          "ตรวจสอบ timeline และโพสต์เดี่ยว",
+          "ทำภารกิจและส่งหลักฐาน"
+        ]
+      },
+      hero: {
+        title: "Campaign: X Embedded Widgets",
+        subtitle: ""
+      },
+      campaignBody: [
+        { type: "text", value: "เทมเพลตนี้รองรับทั้ง " },
+        { type: "bold", value: "embeddedPost" },
+        { type: "text", value: " และ " },
+        { type: "bold", value: "timeline" },
+        { type: "text", value: " โดยเปิด/ปิดได้จาก enabled" },
+        { type: "lineBreak" },
+        { type: "light", value: "ถ้า script ภายนอกโหลดไม่ได้ ระบบจะแสดง fallback message ให้ทันที" }
+      ],
+      subWidgets: [
+        {
+          enabled: true,
+          platform: "x",
+          type: "follow",
+          label: "Follow @XDevelopers",
+          username: "XDevelopers"
+        }
+      ],
+      embedWidgets: [
+        {
+          enabled: true,
+          platform: "x",
+          type: "embeddedPost",
+          label: "Embedded Post",
+          postUrl: "https://x.com/XDevelopers/status/1783571179332149324"
+        },
+        {
+          enabled: true,
+          platform: "x",
+          type: "timeline",
+          label: "Timeline",
+          profileUrl: "https://x.com/XDevelopers",
+          height: 420
+        }
+      ],
+      cta: {
+        enabled: true,
+        text: "ส่งหลักฐานแคมเปญ",
+        href: "https://example.com/submit"
+      }
+    };
+  </script>
+  <title>Loading</title>
+  <link rel="stylesheet" href="./template-shell.css" />
+  <script defer src="./template-renderer.js"></script>
+</head>
+<body>
+  <main class="campaign-page">
+    <section id="campaign-root" class="campaign-shell"></section>
+  </main>
+  <script>
+    window.renderCampaignPage(PAGE_CONFIG);
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    const PAGE_CONFIG = {
+      seo: {
+        title: "Telegram Share Campaign Template",
+        description: "Template สำหรับ Telegram Share Button",
+        keywords: "telegram,share,campaign,template",
+        ogTitle: "Telegram Share Campaign Template",
+        ogDescription: "แก้ข้อความและลิงก์จาก PAGE_CONFIG ได้ทันที",
+        ogImage: ""
+      },
+      brand: {
+        logoSrc: "../assets/logo.png",
+        logoAlt: "Campaign Logo"
+      },
+      topWidget: {
+        enabled: true,
+        platform: "telegram",
+        type: "share",
+        label: "แชร์ไป Telegram",
+        text: "ร่วมแคมเปญพิเศษตอนนี้",
+        url: "https://example.com/campaign/tg-share"
+      },
+      bulletBox: {
+        enabled: true,
+        items: [
+          "กดแชร์แคมเปญไป Telegram",
+          "ยืนยันการแชร์ตามขั้นตอน",
+          "รับสิทธิ์ตามเงื่อนไข"
+        ]
+      },
+      hero: {
+        title: "Campaign: Telegram Share",
+        subtitle: ""
+      },
+      campaignBody: [
+        { type: "text", value: "หน้านี้เน้น " },
+        { type: "bold", value: "Share Button" },
+        { type: "text", value: " เพื่อแชร์ข้อความและลิงก์ได้ทันที" },
+        { type: "lineBreak" },
+        { type: "link", text: "ดู URL ตัวอย่าง", href: "https://example.com/campaign/tg-share" }
+      ],
+      subWidgets: [
+        {
+          enabled: true,
+          platform: "telegram",
+          type: "contact",
+          label: "เปิดช่องข่าวสาร",
+          href: "https://t.me/telegram"
+        }
+      ],
+      embedWidgets: [],
+      cta: {
+        enabled: true,
+        text: "ไปหน้าส่งหลักฐาน",
+        href: "https://example.com/submit"
+      }
+    };
+  </script>
+  <title>Loading</title>
+  <link rel="stylesheet" href="./template-shell.css" />
+  <script defer src="./template-renderer.js"></script>
+</head>
+<body>
+  <main class="campaign-page">
+    <section id="campaign-root" class="campaign-shell"></section>
+  </main>
+  <script>
+    window.renderCampaignPage(PAGE_CONFIG);
+  </script>
+</body>
+</html>
